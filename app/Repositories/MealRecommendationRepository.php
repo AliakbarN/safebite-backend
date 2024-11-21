@@ -11,7 +11,7 @@ class MealRecommendationRepository
 {
     public function store(int $mealId, int $historyId): MealRecommendation
     {
-        $recommendation = MealRecommendation::where('user_history_id', $historyId)->first();
+        $recommendation = MealRecommendation::where('meal_id', $mealId)->first();
 
         if (!$recommendation) {
             $recommendation = MealRecommendation::create([

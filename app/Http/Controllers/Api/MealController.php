@@ -39,7 +39,7 @@ class MealController extends Controller
 
     public function addToFavorites(Request $request, Meal $meal): JsonResponse
     {
-        $user = Auth::user(); // Get the authenticated user
+        $user = Auth::user();
 
         if ($this->mealRepository->storeToFavorites($user, $meal)) {
             return $this->response->json(['message' => 'Meal added to favorites successfully.']);
@@ -50,7 +50,7 @@ class MealController extends Controller
 
     public function removeFromFavorites(Request $request, Meal $meal): JsonResponse
     {
-        $user = Auth::user(); // Get the authenticated user
+        $user = Auth::user();
 
         if ($this->mealRepository->removeFromFavorites($user, $meal)) {
             return $this->response->json(['message' => 'Meal removed from favorites successfully.']);

@@ -97,12 +97,10 @@ class MealRepository
 
     public function storeToFavorites(User $user, Meal $meal): bool
     {
-        // Check if the meal is already in the user's favorites
         if ($user->favoriteMeals()->where('meal_id', $meal->id)->exists()) {
-            return false; // Return false if the meal is already a favorite
+            return false;
         }
 
-        // Attach the meal for the user's favorites
         $user->favoriteMeals()->attach($meal->id);
 
         return true;
@@ -110,11 +108,15 @@ class MealRepository
 
     public function removeFromFavorites(User $user, Meal $meal): bool
     {
-        // Detach the meal from the user's favorites
         if ($user->favoriteMeals()->detach($meal->id)) {
-            return true; // Return true if successful
+            return true;
         }
 
-        return false; // Return false if the meal was not in the favorites
+        return false;
+    }
+
+    public function getFavourited(User $user): Collection
+    {
+        return $user->favoriteMeals()->get();
     }
 }

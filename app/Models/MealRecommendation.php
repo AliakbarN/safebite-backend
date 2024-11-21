@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MealRecommendation extends Model
 {
+    protected $table = 'meal_recommendation';
+
     protected $fillable = [
         'meal_id',
         'user_history_id',

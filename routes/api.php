@@ -1,29 +1,38 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\MealCategoryController;
 use App\Http\Controllers\Api\MealController;
 use App\Http\Controllers\Api\RecommendationController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\UserHistoryController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('auth/register', [AuthController::class, 'register'])
-    ->name('user.register');
 
-Route::prefix('auth')
-    ->middleware('auth:api') // Add this line to apply the middleware to all routes within the prefix
-    ->group(function () {
+Route::middleware('auth:api')
+    ->prefix('user')
+    ->group(function ()
+    {
+        Route::post('register', [AuthController::class, 'register'])
+            ->withoutMiddleware('auth:api')
+            ->name('user.register');
+
         Route::post('login', [AuthController::class, 'login'])
-            ->withoutMiddleware('auth:api') // Login should not require authentication
+            ->withoutMiddleware('auth:api')
             ->name('user.login');
 
         Route::post('logout', [AuthController::class, 'logout'])
             ->name('user.logout');
 
-        Route::post('user', [AuthController::class, 'user'])
-            ->name('user.show');
+        Route::get('getFavouriteMeals', [UserController::class, 'getFavoriteMeals'])
+            ->name('user.getFavoriteMeals');
 
-        Route::put('user', [UserController::class, 'update'])
+        Route::put('/', [UserController::class, 'update'])
             ->name('user.update');
+
+        Route::get('/{user}', [UserController::class, 'show'])
+            ->name('user.show');
     });
 
 Route::middleware('auth:api')
@@ -45,12 +54,20 @@ Route::middleware('auth:api')
         Route::get('favourite/remove/{meal}', [MealController::class, 'removeFromFavorites'])
             ->name('meals.favourite.remove');
 
-        Route::get('categories', [\App\Http\Controllers\Api\MealCategoryController::class, 'index'])
+        Route::get('categories', [MealCategoryController::class, 'index'])
             ->name('meals.categories.index');
 
-        Route::get('confirm/{meal}', [\App\Http\Controllers\Api\UserHistoryController::class, 'confirmMeal'])
+        Route::get('confirm/{meal}', [UserHistoryController::class, 'confirmMeal'])
             ->name('meals.confirm');
 
-        Route::get('getCurrentRecommendations', [\App\Http\Controllers\Api\UserHistoryController::class, 'getCurrentRecommendations'])
+        Route::get('getCurrentRecommendations', [UserHistoryController::class, 'getCurrentRecommendations'])
             ->name('meals.getCurrentRecommendations');
+    });
+
+Route::middleware('auth:api')
+    ->prefix('chat')
+    ->group(function ()
+    {
+        Route::post('/user/sendMessage', [ChatController::class, 'userSendMessage']);
+        Route::get('/user/getChatHistory', [ChatController::class, 'getChatHistory']);
     });

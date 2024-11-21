@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Repositories\MealRepository;
 use App\Services\Api\Openai;
+use App\Services\ChatService;
 use App\Services\MealRecommendationsGenerator;
 use App\Services\MealRecommendationsGenerator\MessageGenerator;
 use Illuminate\Foundation\Application;
@@ -26,6 +27,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(MessageGenerator::class, function (Application $app)
         {
             return new MessageGenerator();
+        });
+
+        $this->app->singleton(ChatService::class, function (Application $app)
+        {
+            return new ChatService($app->make(Openai::class));
         });
 
         $this->app->singleton(MealRecommendationsGenerator::class, function (Application $app)

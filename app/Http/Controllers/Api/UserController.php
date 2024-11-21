@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
+use App\Repositories\MealRepository;
 use App\Repositories\UserDataRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Http\JsonResponse;
@@ -19,12 +20,33 @@ class UserController extends Controller
     protected Response|ResponseFactory $response;
     protected UserRepository $userRepository;
     protected UserDataRepository $userDataRepository;
+    protected MealRepository $mealRepository;
 
-    public function __construct(UserRepository $userRepository, UserDataRepository $userDataRepository)
+    public function __construct
+    (
+        UserRepository $userRepository,
+        UserDataRepository $userDataRepository,
+        MealRepository $mealRepository
+    )
     {
         $this->userRepository = $userRepository;
         $this->response = response();
         $this->userDataRepository = $userDataRepository;
+        $this->mealRepository = $mealRepository;
+    }
+
+    public function show(User $user): JsonResponse
+    {
+        $userData = $this->userDataRepository->getByUser($user->id);
+
+        return $this->response->json(
+            [
+                'data' => [
+                    'user' => $user,
+                    'data' => $userData,
+                ]
+            ]
+        );
     }
 
     public function update(UserRequest $request): JsonResponse
@@ -58,6 +80,17 @@ class UserController extends Controller
 
         return $this->response->json([
             'message' => 'User update successfully',
+        ]);
+    }
+
+    public function getFavoriteMeals(): JsonResponse
+    {
+        $user = Auth::user();
+
+        $favouriteMeals = $this->mealRepository->getFavourited($user);
+
+        return $this->response->json([
+            'data' => $favouriteMeals,
         ]);
     }
 }

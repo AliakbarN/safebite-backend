@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/login', function () {
+    return redirect('/');
+})->name('login');
 
-Route::get('test', [\App\Http\Controllers\Api\RecommendationController::class, 'getRecommendations']);
-Route::post('test1', [\App\Http\Controllers\Api\RecommendationController::class, 'updateRecommendation']);
+Route::view('/{any}', 'app')->where('any', '.*');
+

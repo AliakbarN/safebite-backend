@@ -8,6 +8,11 @@ use App\Models\UserData;
 
 class UserDataRepository
 {
+    public function getByUser(int $userId): ?UserData
+    {
+        return UserData::where('user_id', $userId)->first();
+    }
+
     public function store(int $userId, int $age, ?array $allergies, ?array $diseases, int $weight, int $height, string $gender): UserData
     {
         $userData = UserData::create([
